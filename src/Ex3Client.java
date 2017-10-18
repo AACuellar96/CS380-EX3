@@ -11,10 +11,16 @@ public final class Ex3Client {
             PrintStream out = new PrintStream((socket.getOutputStream()),true,"UTF-8");
             int size = is.read();
             System.out.println("Reading "+size+" bytes.");
+            System.out.print("Data received: ");
             byte[] holder = new byte[size];
             for(int i=0;i<size;i++){
-                holder[i]=(byte) is.read();
+                if(i%10==0)
+                    System.out.println("");
+                int val = is.read();
+                System.out.print(Integer.toHexString(val).toUpperCase());
+                holder[i]=(byte) val;
             }
+            System.out.println("");
             int cSum =checksum(holder);
             String hex = Integer.toHexString(cSum);
             if(hex.length()>4)
@@ -24,7 +30,7 @@ public final class Ex3Client {
             else if(hex.length()==2)
                 hex="00"+hex;
             holder[0] = (byte) Integer.parseInt(hex.substring(0,2).toUpperCase(),16);
-            //Does it work for 1 byte length?
+            //Doesnt work for 1 byte?
             try {
                 holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(), 16);
             }
