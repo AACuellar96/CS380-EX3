@@ -25,18 +25,13 @@ public final class Ex3Client {
             String hex = Integer.toHexString(cSum);
             if(hex.length()>4)
                 hex=hex.substring(hex.length()-4);
-            else if(hex.length()==3)
-                hex="0"+hex;
-            else if(hex.length()==2)
-                hex="00"+hex;
+            else{
+                while(hex.length()<4)
+                    hex="0"+hex;
+            }
+            holder=new byte[2];
             holder[0] = (byte) Integer.parseInt(hex.substring(0,2).toUpperCase(),16);
-            //Doesnt work for 1 byte?
-            try {
-                holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(), 16);
-            }
-            catch (ArrayIndexOutOfBoundsException e){
-
-            }
+            holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(), 16);
             System.out.println("Checksum calculated: 0x"+hex.toUpperCase() );
             out.write(holder);
             if(is.read()==1)
