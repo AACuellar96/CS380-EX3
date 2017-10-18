@@ -18,7 +18,7 @@ public final class Ex3Client {
             int cSum =checksum(holder);
             String hex = Integer.toHexString(cSum);
             holder[0] = (byte) Integer.parseInt(hex.substring(0,2).toUpperCase(),16);
-            holder[1] = (byte) Integer.parseInt(hex.substring(2,4).toUpperCase(),16);
+            holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(),16);
             System.out.println("Checksum calculated: 0x"+hex.toUpperCase() );
             out.write(holder);
             if(is.read()==1)
@@ -36,12 +36,13 @@ public final class Ex3Client {
     public static short checksum(byte[] b){
         int cSum = 0;
         for(int i=0;i<b.length;i+=2){
-            //Currently does 1 byte at a time b/c reading half bytes.
             short one = (short) (b[i] & 0xFF);
             short two = (short) (b[i+1] & 0xFF);
             cSum += ((256*one)+ two);
+            if(cSum>=65535){
+                cSum-=(65535);
+            }
         }
-        short res = (short) cSum;
-        return res;
+        return (short) ((~(cSum))& 0xFFFF);
     }
 }
