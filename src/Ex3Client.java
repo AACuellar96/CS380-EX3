@@ -10,7 +10,7 @@ public final class Ex3Client {
             BufferedReader brIS = new BufferedReader(new InputStreamReader(System.in));
             PrintStream out = new PrintStream((socket.getOutputStream()),true,"UTF-8");
             int size = is.read();
-            System.out.print("Reading "+size+" bytes.");
+            System.out.println("Reading "+size+" bytes.");
             byte[] holder = new byte[size];
             for(int i=0;i<size;i++){
                 holder[i]=(byte) is.read();
@@ -18,7 +18,8 @@ public final class Ex3Client {
             int cSum =checksum(holder);
             String hex = Integer.toHexString(cSum);
             holder[0] = (byte) Integer.parseInt(hex.substring(0,2).toUpperCase(),16);
-            holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(),16);
+            holder[1] = (byte) Integer.parseInt(hex.substring(2,4).toUpperCase(),16);
+            System.out.println("Checksum calculated: 0x"+hex.toUpperCase() );
             out.write(holder);
             if(is.read()==1)
                 System.out.println("Response good.");
@@ -33,12 +34,14 @@ public final class Ex3Client {
         }
     }
     public static short checksum(byte[] b){
-        short cSum = 0;
+        int cSum = 0;
         for(int i=0;i<b.length;i+=2){
+            //Currently does 1 byte at a time b/c reading half bytes.
             short one = (short) (b[i] & 0xFF);
             short two = (short) (b[i+1] & 0xFF);
             cSum += ((256*one)+ two);
         }
-        return cSum;
+        short res = (short) cSum;
+        return res;
     }
 }
