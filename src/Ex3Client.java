@@ -17,8 +17,20 @@ public final class Ex3Client {
             }
             int cSum =checksum(holder);
             String hex = Integer.toHexString(cSum);
+            if(hex.length()>4)
+                hex=hex.substring(hex.length()-4);
+            else if(hex.length()==3)
+                hex="0"+hex;
+            else if(hex.length()==2)
+                hex="00"+hex;
             holder[0] = (byte) Integer.parseInt(hex.substring(0,2).toUpperCase(),16);
-            holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(),16);
+            //Does it work for 1 byte length?
+            try {
+                holder[1] = (byte) Integer.parseInt(hex.substring(2).toUpperCase(), 16);
+            }
+            catch (ArrayIndexOutOfBoundsException e){
+
+            }
             System.out.println("Checksum calculated: 0x"+hex.toUpperCase() );
             out.write(holder);
             if(is.read()==1)
@@ -37,10 +49,18 @@ public final class Ex3Client {
         int cSum = 0;
         for(int i=0;i<b.length;i+=2){
             short one = (short) (b[i] & 0xFF);
-            short two = (short) (b[i+1] & 0xFF);
-            cSum += ((256*one)+ two);
-            if(cSum>=65535){
-                cSum-=(65535);
+            try {
+                short two = (short) (b[i + 1] & 0xFF);
+                cSum += ((256 * one) + two);
+                if (cSum >= 65535) {
+                    cSum -= (65535);
+                }
+            }
+            catch (ArrayIndexOutOfBoundsException e){
+                cSum+=(256*one);
+                if (cSum >= 65535) {
+                    cSum -= (65535);
+                }
             }
         }
         return (short) ((~(cSum))& 0xFFFF);
